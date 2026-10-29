@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>QX.Mcp</PackageId>
+    <Description>MCP server and native game tools for QX extensions.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <BundledProject Include="../../src/QX.Mcp/QX.Mcp.csproj" />
+    <ProjectReference Include="../QX/QX.Package.csproj" />
+  </ItemGroup>
+  <Import Project="../Package.props" />
+</Project>

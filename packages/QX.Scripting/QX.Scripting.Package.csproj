@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>QX.Scripting</PackageId>
+    <Description>C# script compilation, script globals and UI declarations for QX hosts.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <BundledProject Include="../../src/QX.Scripting/QX.Scripting.csproj" />
+    <ProjectReference Include="../QX/QX.Package.csproj" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="$(QxRoslynVersion)" />
+  </ItemGroup>
+  <Import Project="../Package.props" />
+</Project>

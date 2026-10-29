@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "NodaTime": {
+        "type": "Transitive",
+        "resolved": "3.3.5",
+        "contentHash": "0qtGKHOYhQGCeUItP4RN8KJktsKD9j/B4IqmoecUL+ymReq69O71qEpZY6x0aQPZa5KDLXY41aEOOHZ9T6Uqgw=="
+      },
+      "SharpCompress": {
+        "type": "Transitive",
+        "resolved": "0.50.0",
+        "contentHash": "EzoWIzA31rb/kADwHkcmdT1rzqnT91kR/Df8X/gqd3qvXhgMbCzyKIWH6M3LTDwPIr0uLoXfX9fvThidXHBdyQ=="
+      },
+      "Flazzy.Internal": {
+        "type": "Project"
+      },
+      "QX.ClientCatalog.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "QX.FlashHeaders.Internal": "[0.1.1, )",
+          "QX.Protocol.Internal": "[0.1.1, )"
+        }
+      },
+      "QX.Core.Internal": {
+        "type": "Project"
+      },
+      "QX.FlashHeaders.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "Flazzy.Internal": "[0.1.1, )",
+          "QX.Core.Internal": "[0.1.1, )",
+          "SharpCompress": "[0.50.0, )"
+        }
+      },
+      "QX.Game.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "NodaTime": "[3.3.5, )",
+          "QX.Core.Internal": "[0.1.1, )",
+          "QX.Interception.Internal": "[0.1.1, )",
+          "QX.Model.Internal": "[0.1.1, )",
+          "QX.Protocol.Internal": "[0.1.1, )"
+        }
+      },
+      "QX.Interception.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core.Internal": "[0.1.1, )",
+          "QX.Protocol.Internal": "[0.1.1, )"
+        }
+      },
+      "QX.Model.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Protocol.Internal": "[0.1.1, )"
+        }
+      },
+      "QX.Protocol.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core.Internal": "[0.1.1, )"
+        }
+      }
+    },
+    "net10.0/linux-x64": {},
+    "net10.0/osx-arm64": {},
+    "net10.0/osx-x64": {},
+    "net10.0/win-x64": {}
+  }
+}

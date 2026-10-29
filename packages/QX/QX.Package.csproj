@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>QX</PackageId>
+    <Description>Build native Habbo extensions with G-Earth, live game state, typed actions, Wired tools and offline simulation.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <BundledProject Include="../../src/QX.Game/QX.Game.csproj" />
+    <BundledProject Include="../../src/QX.Hosting/QX.Hosting.csproj" />
+    <BundledProject Include="../../src/QX.ClientCatalog/QX.ClientCatalog.csproj" />
+    <BundledProject Include="../../src/QX.FlashHeaders/QX.FlashHeaders.csproj" />
+    <BundledProject Include="../../src/QX.Platform/QX.Platform.csproj" />
+    <BundledProject Include="../../src/Flazzy/Flazzy.csproj" />
+    <ProjectReference Include="../QX.Core/QX.Core.Package.csproj" />
+    <PackageReference Include="NodaTime" Version="$(QxNodaTimeVersion)" />
+    <PackageReference Include="SharpCompress" Version="$(QxSharpCompressVersion)" />
+    <None Include="../../src/Flazzy/LICENSE.md" Pack="true" PackagePath="licenses/Flazzy.txt" />
+  </ItemGroup>
+  <Import Project="../Package.props" />
+</Project>

@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          global-json-file: global.json
+      - name: Verify message facade
+        shell: pwsh
+        run: ./tools/generate-message-facade.ps1 -check
+      - name: Build packages
+        shell: pwsh
+        run: ./tools/pack-framework.ps1
+      - name: Build examples
+        shell: pwsh
+        run: |
+          foreach ($example in Get-ChildItem examples/*/*.csproj) {
+            dotnet build $example.FullName -c Release -p:RestoreLockedMode=true
+            if ($LASTEXITCODE -ne 0) { throw "Building $($example.Name) failed." }
+          }
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: QX-${{ matrix.os }}
+          path: artifacts/framework/*.nupkg
+          if-no-files-found: error
+          retention-days: 14

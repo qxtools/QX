@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <QxBuildVersion Condition="'$(QxBuildVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match('$(QxFrameworkVersion)', '^\d+\.\d+\.\d+').Value)</QxBuildVersion>
+    <FileVersion>$(QxBuildVersion).0</FileVersion>
+    <InformationalVersion>$(QxFrameworkVersion)</InformationalVersion>
+  </PropertyGroup>
+</Project>

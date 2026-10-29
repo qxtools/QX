@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "QX.Core.Internal": {
+        "type": "Project"
+      },
+      "QX.Interception.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core.Internal": "[0.1.1, )",
+          "QX.Protocol.Internal": "[0.1.1, )"
+        }
+      },
+      "QX.Model.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Protocol.Internal": "[0.1.1, )"
+        }
+      },
+      "QX.Protocol.Internal": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core.Internal": "[0.1.1, )"
+        }
+      }
+    },
+    "net10.0/linux-x64": {},
+    "net10.0/osx-arm64": {},
+    "net10.0/osx-x64": {},
+    "net10.0/win-x64": {}
+  }
+}

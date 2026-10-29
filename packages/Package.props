@@ -1,0 +1,22 @@
+<Project>
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CollectPackageAssemblies</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="@(BundledProject)" PrivateAssets="all" />
+    <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+  <Target Name="CollectPackageAssemblies" DependsOnTargets="BuildOnlySettings;ResolveReferences">
+    <MSBuild Projects="@(BundledProject)" Targets="GetTargetPath" BuildInParallel="true" Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework)">
+      <Output TaskParameter="TargetOutputs" ItemName="PackageAssembly" />
+    </MSBuild>
+    <ItemGroup>
+      <PackageDocumentation Include="@(PackageAssembly->'%(RootDir)%(Directory)%(Filename).xml')" />
+      <TfmSpecificPackageFile Include="@(PackageAssembly)" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="@(PackageDocumentation)" Condition="Exists('%(PackageDocumentation.Identity)')" PackagePath="lib/$(TargetFramework)/" />
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>QX.Core</PackageId>
+    <Description>Packets, message identifiers, game models and interception interfaces for QX extensions.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <BundledProject Include="../../src/QX.Core/QX.Core.csproj" />
+    <BundledProject Include="../../src/QX.Protocol/QX.Protocol.csproj" />
+    <BundledProject Include="../../src/QX.Model/QX.Model.csproj" />
+    <BundledProject Include="../../src/QX.Interception/QX.Interception.csproj" />
+  </ItemGroup>
+  <Import Project="../Package.props" />
+</Project>

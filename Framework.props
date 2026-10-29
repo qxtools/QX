@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <QxFrameworkVersion>0.1.1</QxFrameworkVersion>
+    <IsPackable>false</IsPackable>
+    <PackageId>$(MSBuildProjectName).Internal</PackageId>
+    <QxNodaTimeVersion>3.3.5</QxNodaTimeVersion>
+    <QxSharpCompressVersion>0.50.0</QxSharpCompressVersion>
+    <QxRoslynVersion>5.3.0</QxRoslynVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Product>QX</Product>
+    <Version>$(QxFrameworkVersion)</Version>
+    <PathMap>$(MSBuildThisFileDirectory)=/_/</PathMap>
+    <Authors>QDave</Authors>
+    <Description>QX framework for native Habbo extensions.</Description>
+    <PackageTags>Habbo;G-Earth;extensions</PackageTags>
+    <PackageProjectUrl>https://github.com/QDaves/QX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/QDaves/QX</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+</Project>

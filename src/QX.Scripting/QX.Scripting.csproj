@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Qx.Scripting</RootNamespace>
+    <AssemblyName>QX.Scripting</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="$(QxRoslynVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QX.Interception\QX.Interception.csproj" />
+    <ProjectReference Include="..\QX.Game\QX.Game.csproj" />
+    <ProjectReference Include="..\QX.Model\QX.Model.csproj" />
+    <ProjectReference Include="..\QX.Platform\QX.Platform.csproj" />
+  </ItemGroup>
+
+</Project>

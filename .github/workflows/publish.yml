@@ -1,0 +1,92 @@
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      unlist:
+        description: "Package versions to unlist, separated by spaces: QX.Package@0.1.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nuget-publish
+  cancel-in-progress: false
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          global-json-file: global.json
+      - name: Verify release version
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = ([xml](Get-Content Framework.props -Raw)).Project.PropertyGroup.QxFrameworkVersion | Where-Object { $_ }
+          if ($env:GITHUB_REF -ne "refs/tags/v$version") { throw 'The release tag must match QxFrameworkVersion.' }
+          git merge-base --is-ancestor HEAD origin/main
+          if ($LASTEXITCODE -ne 0) { throw 'Release commits must belong to main.' }
+      - name: Verify message facade
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: ./tools/generate-message-facade.ps1 -check
+      - name: Build packages
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: ./tools/pack-framework.ps1
+      - name: Authenticate to NuGet
+        id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841
+        with:
+          user: QDave
+      - name: Publish packages
+        if: github.event_name == 'push'
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($package in Get-ChildItem artifacts/framework -Filter '*.nupkg' | Sort-Object Name) {
+            dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+            if ($LASTEXITCODE -ne 0) { throw "Publishing $($package.Name) failed." }
+          }
+      - name: Unlist package versions
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+          PACKAGE_VERSIONS: ${{ inputs.unlist }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:GITHUB_REF -ne 'refs/heads/main') { throw 'Package maintenance must run from main.' }
+          $versions = @($env:PACKAGE_VERSIONS.Trim() -split '\s+')
+          foreach ($entry in $versions) {
+            if ($entry -notmatch '^QX(?:\.[A-Za-z0-9]+)*@\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$') {
+              throw "Invalid QX package version: $entry"
+            }
+          }
+          foreach ($entry in $versions) {
+            $package, $version = $entry -split '@', 2
+            dotnet nuget delete $package $version --non-interactive --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+            if ($LASTEXITCODE -ne 0) { throw "Unlisting $entry failed." }
+          }
