@@ -16,9 +16,7 @@ dotnet run --project examples/RoomInspector -- -p 9092
 
 The room inspector has a furniture list, search, item actions and JSON export. Enter a room after connecting.
 
-Other examples: [local chat commands](examples/ChatCommands) and [custom MCP tools](examples/McpRoomTools).
-
-## Packages
+## NuGet packages
 
 - `QX` connection, game state, native API and Wired.
 - `QX.Core` low-level packets, models and interception; included by `QX`.

@@ -1,6 +1,7 @@
 # Getting started
 
-Install the .NET SDK version listed in the repository's `global.json`, then create a console extension:
+Install the .NET SDK version listed in the repository's `global.json`, then create a console extension
+and add QX from NuGet:
 
 ```sh
 dotnet new console -n MyExtension -f net10.0
@@ -62,7 +63,7 @@ Ctrl+C disconnects and disposes the host.
 For complete UI, chat-command and MCP projects, see [Building an extension](extensions.md).
 For actions and their typed inputs, use the [Game API](application.md) and [API reference](../api/index.md).
 
-## Packages
+## NuGet packages
 
 | Package | Use |
 | --- | --- |
