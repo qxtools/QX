@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <QxFrameworkVersion>0.1.0</QxFrameworkVersion>
+    <IsPackable>false</IsPackable>
+    <QxFrameworkPackage Condition="'$(MSBuildProjectName)' == 'QX.Mcp' or '$(MSBuildProjectName)' == 'QX.Core' or '$(MSBuildProjectName)' == 'QX.Model' or '$(MSBuildProjectName)' == 'QX.Protocol' or '$(MSBuildProjectName)' == 'QX.Interception' or '$(MSBuildProjectName)' == 'QX.Game' or '$(MSBuildProjectName)' == 'QX.FlashHeaders' or '$(MSBuildProjectName)' == 'QX.ClientCatalog' or '$(MSBuildProjectName)' == 'QX.Hosting' or '$(MSBuildProjectName)' == 'QX.Platform' or '$(MSBuildProjectName)' == 'QX.Scripting' or '$(MSBuildProjectName)' == 'Flazzy'">true</QxFrameworkPackage>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(QxFrameworkPackage)' == 'true'">
+    <IsPackable>true</IsPackable>
+    <Product>QX</Product>
+    <Version>$(QxFrameworkVersion)</Version>
+    <PathMap>$(MSBuildThisFileDirectory)=/_/</PathMap>
+    <PackageId>$(MSBuildProjectName)</PackageId>
+    <PackageId Condition="'$(MSBuildProjectName)' == 'Flazzy'">QX.Flazzy</PackageId>
+    <Authors>QDave</Authors>
+    <Description>QX framework for native Habbo extensions.</Description>
+    <PackageTags>Habbo;G-Earth;extensions</PackageTags>
+    <PackageProjectUrl>https://github.com/QDaves/QX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/QDaves/QX</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+</Project>

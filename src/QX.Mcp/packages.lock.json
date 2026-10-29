@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "NodaTime": {
+        "type": "Transitive",
+        "resolved": "3.3.5",
+        "contentHash": "0qtGKHOYhQGCeUItP4RN8KJktsKD9j/B4IqmoecUL+ymReq69O71qEpZY6x0aQPZa5KDLXY41aEOOHZ9T6Uqgw=="
+      },
+      "qx.core": {
+        "type": "Project"
+      },
+      "qx.game": {
+        "type": "Project",
+        "dependencies": {
+          "NodaTime": "[3.3.5, )",
+          "QX.Core": "[0.1.1, )",
+          "QX.Interception": "[0.1.1, )",
+          "QX.Model": "[0.1.1, )",
+          "QX.Protocol": "[0.1.1, )"
+        }
+      },
+      "qx.interception": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core": "[0.1.1, )",
+          "QX.Protocol": "[0.1.1, )"
+        }
+      },
+      "qx.model": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Protocol": "[0.1.1, )"
+        }
+      },
+      "qx.protocol": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core": "[0.1.1, )"
+        }
+      }
+    },
+    "net10.0/linux-x64": {},
+    "net10.0/osx-arm64": {},
+    "net10.0/osx-x64": {},
+    "net10.0/win-x64": {}
+  }
+}

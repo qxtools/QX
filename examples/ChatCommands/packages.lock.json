@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "NodaTime": {
+        "type": "Transitive",
+        "resolved": "3.3.5",
+        "contentHash": "0qtGKHOYhQGCeUItP4RN8KJktsKD9j/B4IqmoecUL+ymReq69O71qEpZY6x0aQPZa5KDLXY41aEOOHZ9T6Uqgw=="
+      },
+      "SharpCompress": {
+        "type": "Transitive",
+        "resolved": "0.50.0",
+        "contentHash": "EzoWIzA31rb/kADwHkcmdT1rzqnT91kR/Df8X/gqd3qvXhgMbCzyKIWH6M3LTDwPIr0uLoXfX9fvThidXHBdyQ=="
+      },
+      "qx.clientcatalog": {
+        "type": "Project",
+        "dependencies": {
+          "QX.FlashHeaders": "[0.1.30-preview.12, )",
+          "QX.Protocol": "[0.1.30-preview.12, )"
+        }
+      },
+      "qx.core": {
+        "type": "Project"
+      },
+      "qx.flashheaders": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core": "[0.1.30-preview.12, )",
+          "QX.Flazzy": "[0.1.30-preview.12, )",
+          "SharpCompress": "[0.50.0, )"
+        }
+      },
+      "QX.Flazzy": {
+        "type": "Project"
+      },
+      "qx.game": {
+        "type": "Project",
+        "dependencies": {
+          "NodaTime": "[3.3.5, )",
+          "QX.Core": "[0.1.30-preview.12, )",
+          "QX.Interception": "[0.1.30-preview.12, )",
+          "QX.Model": "[0.1.30-preview.12, )",
+          "QX.Protocol": "[0.1.30-preview.12, )"
+        }
+      },
+      "qx.hosting": {
+        "type": "Project",
+        "dependencies": {
+          "QX.ClientCatalog": "[0.1.30-preview.12, )",
+          "QX.Core": "[0.1.30-preview.12, )",
+          "QX.Game": "[0.1.30-preview.12, )",
+          "QX.Interception": "[0.1.30-preview.12, )",
+          "QX.Model": "[0.1.30-preview.12, )",
+          "QX.Protocol": "[0.1.30-preview.12, )"
+        }
+      },
+      "qx.interception": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core": "[0.1.30-preview.12, )",
+          "QX.Protocol": "[0.1.30-preview.12, )"
+        }
+      },
+      "qx.model": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Protocol": "[0.1.30-preview.12, )"
+        }
+      },
+      "qx.protocol": {
+        "type": "Project",
+        "dependencies": {
+          "QX.Core": "[0.1.30-preview.12, )"
+        }
+      }
+    },
+    "net10.0/linux-x64": {},
+    "net10.0/osx-arm64": {},
+    "net10.0/osx-x64": {},
+    "net10.0/win-x64": {}
+  }
+}

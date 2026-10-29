@@ -1,0 +1,27 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../src",
+          "files": [
+            "QX.Hosting/QX.Hosting.csproj",
+            "QX.Mcp/QX.Mcp.csproj",
+            "QX.ClientCatalog/QX.ClientCatalog.csproj",
+            "QX.Game/QX.Game.csproj",
+            "QX.Model/QX.Model.csproj",
+            "QX.Interception/QX.Interception.csproj",
+            "QX.Protocol/QX.Protocol.csproj",
+            "QX.Platform/QX.Platform.csproj",
+            "QX.Core/QX.Core.csproj",
+            "QX.Scripting/QX.Scripting.csproj"
+          ]
+        }
+      ],
+      "dest": "../artifacts/framework-docs/api",
+      "properties": {
+        "Configuration": "Release"
+      }
+    }
+  ]
+}
