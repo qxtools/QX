@@ -2,7 +2,7 @@
   "name": "qx-framework-docs",
   "private": true,
   "type": "module",
-  "repository": "https://github.com/QDaves/QX",
+  "repository": "https://github.com/qxscripter/QX",
   "engines": {
     "node": ">=22"
   },

@@ -30,5 +30,5 @@ editor or desktop UI. See [MCP](mcp.md).
 `Walk(5, 8)` available without a prefix. The script guides describe this optional API; panel
 rendering and editor behavior belong to the application hosting it.
 
-[QX Scripter](https://github.com/QDaves/QX-Scripter) is one application built on the framework.
+[QX Scripter](https://github.com/qxscripter/QX-Scripter) is one application built on the framework.
 Your extension does not need to install or launch it.

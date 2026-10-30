@@ -1,12 +1,12 @@
 # Building an extension
 
 QX runs the connection and game state. Your extension owns its interface and behavior.
-These are complete, runnable projects in the [examples folder](https://github.com/QDaves/QX/tree/main/examples).
+These are complete, runnable projects in the [examples folder](https://github.com/qxscripter/QX/tree/main/examples).
 
 Requires G-Earth and the .NET SDK version in `global.json`.
 
 ```sh
-git clone https://github.com/QDaves/QX.git
+git clone https://github.com/qxscripter/QX.git
 cd QX
 ```
 

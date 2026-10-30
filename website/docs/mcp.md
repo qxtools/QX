@@ -54,7 +54,7 @@ A <xref:Qx.Mcp.McpTool> defines its name, input schema, annotations and callback
 tools your extension needs to the server constructor. Exposing a tool grants the connected client
 that capability; read/write annotations describe it but do not enforce authorization.
 
-The [MCP Room Tools example](https://github.com/QDaves/QX/tree/main/examples/McpRoomTools) implements
+The [MCP Room Tools example](https://github.com/qxscripter/QX/tree/main/examples/McpRoomTools) implements
 room inspection, furniture search and movement with checks for room changes and removed items.
 See [Building an extension](extensions.md) for commands and file layout.
 

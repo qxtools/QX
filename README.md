@@ -2,14 +2,14 @@
 
 C# framework for Habbo extensions. G-Earth connection, game state, typed actions, Wired tools and offline simulation.
 
-[Documentation](https://qxscripter.xyz/api) [QX Scripter](https://github.com/QDaves/QX-Scripter)
+[Documentation](https://qxscripter.xyz/api) [QX Scripter](https://github.com/qxscripter/QX-Scripter)
 
 ## Start
 
 Requires the .NET SDK from `global.json` and G-Earth.
 
 ```sh
-git clone https://github.com/QDaves/QX.git
+git clone https://github.com/qxscripter/QX.git
 cd QX
 dotnet run --project examples/RoomInspector -- -p 9092
 ```
