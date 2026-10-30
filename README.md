@@ -9,7 +9,7 @@ C# framework for Habbo extensions. G-Earth connection, game state, typed actions
 Requires the .NET SDK from `global.json` and G-Earth.
 
 ```sh
-git clone https://github.com/qxscripter/QX.git
+git clone https://github.com/qxtools/QX.git
 cd QX
 dotnet run --project examples/RoomInspector -- -p 9092
 ```

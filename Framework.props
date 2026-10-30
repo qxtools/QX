@@ -14,8 +14,8 @@
     <Authors>QDave</Authors>
     <Description>QX framework for native Habbo extensions.</Description>
     <PackageTags>Habbo;G-Earth;extensions</PackageTags>
-    <PackageProjectUrl>https://github.com/qxscripter/QX</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/qxscripter/QX</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/qxtools/QX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/qxtools/QX</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 </Project>
