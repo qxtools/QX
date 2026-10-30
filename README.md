@@ -1,8 +1,8 @@
 # QX
 
-C# framework for Habbo extensions. G-Earth connection, game state, typed actions, Wired tools and offline simulation.
+C# framework for Habbo extensions. G-Earth connection, game state, typed actions.
 
-[Documentation](https://qxscripter.xyz/api) [QX Scripter](https://github.com/qxscripter/QX-Scripter)
+[Documentation](https://qxscripter.xyz/api)
 
 ## Start
 
