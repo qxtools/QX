@@ -599,13 +599,16 @@ public sealed partial class UiSpec
     /// <returns>The parsed panel, empty when the script declares none.</returns>
     public static UiSpec Parse(string code)
     {
+        ArgumentNullException.ThrowIfNull(code);
         var panel = new PanelBuilder(new UiSpec());
-        int offset = 0;
-        foreach (string line in code.Split('\n'))
+        foreach (Range line in code.AsSpan().Split('\n'))
         {
-            int line_offset = offset;
-            offset += line.Length + 1;
-            Match m = DirectiveRegex().Match(line);
+            ReadOnlySpan<char> text = code.AsSpan(line);
+            ReadOnlySpan<char> trimmed = text.TrimStart();
+            if (!trimmed.StartsWith("//", StringComparison.Ordinal) ||
+                !trimmed[2..].TrimStart().StartsWith("@ui:", StringComparison.OrdinalIgnoreCase))
+                continue;
+            Match m = DirectiveRegex().Match(text.ToString());
             if (!m.Success)
                 continue;
 
@@ -617,7 +620,7 @@ public sealed partial class UiSpec
             }
             else
             {
-                panel.Spec.UnknownDirectives.Add(new UiUnknownDirective(written.Value, line_offset + written.Index));
+                panel.Spec.UnknownDirectives.Add(new UiUnknownDirective(written.Value, line.Start.Value + written.Index));
             }
         }
 

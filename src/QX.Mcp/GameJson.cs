@@ -10,11 +10,11 @@ namespace Qx.Mcp;
 public static class GameJson
 {
     private static readonly JsonSerializerOptions Options = CreateOptions();
+    private static readonly JsonSerializerOptions IndentedOptions = new(Options) { WriteIndented = true };
 
     public static string Serialize(object? value, bool indented = true)
     {
-        JsonSerializerOptions options = new(Options) { WriteIndented = indented };
-        return JsonSerializer.Serialize(value, options);
+        return JsonSerializer.Serialize(value, indented ? IndentedOptions : Options);
     }
 
     /// <summary>Binds JSON arguments to the request of an application member.</summary>
@@ -90,9 +90,10 @@ public static class GameJson
     {
         ArgumentNullException.ThrowIfNull(descriptor);
         var properties = new Dictionary<string, object?>(StringComparer.Ordinal);
+        var nullability = new NullabilityInfoContext();
         foreach (ApiParameter parameter in descriptor.Parameters)
         {
-            Dictionary<string, object?> schema = SchemaFor(parameter.Type, [], true);
+            Dictionary<string, object?> schema = SchemaFor(parameter.Type, [], nullability, true);
             schema["description"] = parameter.Description;
             ApplyConstraints(schema, parameter.Type, parameter.Constraints);
             if (!parameter.Required)
@@ -114,7 +115,7 @@ public static class GameJson
     public static object OutputSchema(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
-        return SchemaFor(type, []);
+        return SchemaFor(type, [], new NullabilityInfoContext());
     }
 
     public static object DescribeAvailability(ApiAvailability availability)
@@ -251,6 +252,7 @@ public static class GameJson
     private static Dictionary<string, object?> SchemaFor(
         Type type,
         HashSet<Type> visited,
+        NullabilityInfoContext nullability,
         bool input = false)
     {
         Type effective = Nullable.GetUnderlyingType(type) ?? type;
@@ -260,7 +262,7 @@ public static class GameJson
             {
                 ["anyOf"] = new object[]
                 {
-                    SchemaFor(underlying, visited, input),
+                    SchemaFor(underlying, visited, nullability, input),
                     new Dictionary<string, object?> { ["type"] = "null" }
                 }
             };
@@ -299,7 +301,7 @@ public static class GameJson
                 ["type"] = "object",
                 ["additionalProperties"] = SchemaFor(
                     dictionary_value_type,
-                    visited, input)
+                    visited, nullability, input)
             };
         }
         Type? element_type = CollectionElement(effective);
@@ -308,7 +310,7 @@ public static class GameJson
             return new()
             {
                 ["type"] = "array",
-                ["items"] = SchemaFor(element_type, visited, input)
+                ["items"] = SchemaFor(element_type, visited, nullability, input)
             };
         }
         if (!visited.Add(effective))
@@ -334,8 +336,8 @@ public static class GameJson
                 property.GetCustomAttribute<JsonIncludeAttribute>() is null)
                 continue;
             bool nullable = Nullable.GetUnderlyingType(property.PropertyType) is not null ||
-                !property.PropertyType.IsValueType && new NullabilityInfoContext().Create(property).ReadState is NullabilityState.Nullable;
-            Dictionary<string, object?> schema = SchemaFor(property.PropertyType, visited, input);
+                !property.PropertyType.IsValueType && nullability.Create(property).ReadState is NullabilityState.Nullable;
+            Dictionary<string, object?> schema = SchemaFor(property.PropertyType, visited, nullability, input);
             if (!property.PropertyType.IsValueType && nullable)
             {
                 schema = new Dictionary<string, object?>

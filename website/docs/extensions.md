@@ -106,8 +106,10 @@ when closed. The desktop example also moves UI work onto the UI thread.
 | `host.Extension` | G-Earth lifecycle and packet interception. |
 | `host.Messages` | Resolve named messages without fixed numeric headers. |
 
-Two extensions use separate game state and connections. Immutable hotel data and header catalogs
-share the QX cache. Give each extension its own settings directory and each MCP server its own port.
+Extensions use separate game state and connections to the same G-Earth port. Immutable hotel data
+and header catalogs share the QX cache. Give each extension its own settings directory. MCP servers
+automatically choose an available port when the preferred port is occupied; use `server.ClientUrl`
+to connect to the correct extension.
 
 ## Use packages instead of source references
 
@@ -115,8 +117,8 @@ The repository examples use project references so they run against the source yo
 For a separate project, install the published packages:
 
 ```sh
-dotnet add package QX --version 0.1.1
-dotnet add package QX.Mcp --version 0.1.1
+dotnet add package QX --version 0.1.2
+dotnet add package QX.Mcp --version 0.1.2
 ```
 
 Replace the QX project references with `QX`, and add `QX.Mcp` for the MCP example.

@@ -4,7 +4,7 @@
 or both. It does not depend on QX Scripter or `QX.Scripting`.
 
 ```sh
-dotnet add package QX.Mcp --version 0.1.1
+dotnet add package QX.Mcp --version 0.1.2
 ```
 
 ## Native game tools
@@ -30,8 +30,13 @@ Console.WriteLine(server.ClientUrl);
 ```
 
 Keep the server alive for the host's lifetime. `ClientUrl` is the authenticated connection URL;
-do not publish it. Choose a separate port and configuration file for each extension.
-The configuration retains the generated access token between launches.
+do not publish it. Give each extension its own configuration file; it retains the generated access
+token between launches. Concurrent first launches of the same configuration use one token.
+
+`Port` is the preferred port. If it is occupied, the server tries the next available port, up to
+32 ports by default. `server.Port` and `server.ClientUrl` report the actual endpoint. Set
+`SearchPorts = false` for a fixed endpoint, or adjust `PortSearchCount` to limit the search.
+Separate MCP servers cannot share the same endpoint. They do not forward calls to each other.
 
 `GameTools.Create` supplies snapshot tools such as `get_room`, `get_furni` and `get_inventory`,
 plus native operations named `application_*`. These tool names are part of the current MCP API.

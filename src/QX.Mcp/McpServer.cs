@@ -35,6 +35,7 @@ public sealed class McpServer : IDisposable
     private long _last_request_ticks;
     private readonly object _lifecycle = new();
     private bool _disposed;
+    private int _port;
 
     /// <summary>
     /// When an authenticated request was last served, or null if none has been.
@@ -49,7 +50,7 @@ public sealed class McpServer : IDisposable
             ? new DateTime(ticks, DateTimeKind.Utc)
             : null;
 
-    public int Port => _options.Port;
+    public int Port => Volatile.Read(ref _port);
     public bool IsRunning => _listener?.IsListening == true;
     private bool EditorAvailable => RuntimeSupports(McpRuntimeCapability.Editor);
     private string Instructions => _options.Instructions?.Invoke() ?? string.Empty;
@@ -88,6 +89,7 @@ public sealed class McpServer : IDisposable
         ArgumentNullException.ThrowIfNull(tools);
         options.Validate();
         _options = options;
+        _port = options.Port;
         _config = config ?? (options.ConfigurationPath is { } path ? McpConfig.Load(path) : McpConfig.CreateDefault());
         _tools = BuildTools(tools);
         HashSet<string>? filter = _config.ToolFilter?.ToHashSet(StringComparer.Ordinal);
@@ -115,27 +117,49 @@ public sealed class McpServer : IDisposable
             ObjectDisposedException.ThrowIf(_disposed, this);
             if (IsRunning)
                 return true;
-            var listener = new HttpListener();
-            listener.Prefixes.Add($"http://127.0.0.1:{_options.Port}/mcp/");
-            try
+            int last_port = _options.SearchPorts
+                ? (int)Math.Min(ushort.MaxValue, (long)_options.Port + _options.PortSearchCount - 1)
+                : _options.Port;
+            IEnumerable<int> ports = Enumerable.Range(_options.Port, last_port - _options.Port + 1);
+            if (Port != _options.Port)
+                ports = ports.Prepend(Port).Distinct();
+            foreach (int port in ports)
             {
-                listener.Start();
-                _listener = listener;
-                _cts = new CancellationTokenSource();
-                _ = AcceptLoop(listener, _cts.Token);
-                PortRegistered = false;
-                StartFailure = null;
-                return true;
+                var listener = new HttpListener();
+                listener.Prefixes.Add($"http://127.0.0.1:{port}/mcp/");
+                try
+                {
+                    listener.Start();
+                    Volatile.Write(ref _port, port);
+                    _listener = listener;
+                    _cts = new CancellationTokenSource();
+                    _ = AcceptLoop(listener, _cts.Token);
+                    PortRegistered = false;
+                    StartFailure = null;
+                    return true;
+                }
+                catch (HttpListenerException error)
+                {
+                    listener.Close();
+                    bool occupied = error.ErrorCode is ErrorAlreadyExists or 32 or 48 or 98 or 10048;
+                    PortRegistered = error.ErrorCode == ErrorAlreadyExists;
+                    StartFailure = PortRegistered
+                        ? $"MCP port {port} is already registered."
+                        : occupied
+                            ? $"MCP port {port} is held by {PortHolder(port)}."
+                            : $"MCP could not listen on port {port}: {error.Message}";
+                    if (!occupied)
+                        return false;
+                }
+                catch
+                {
+                    listener.Close();
+                    throw;
+                }
             }
-            catch (HttpListenerException error)
-            {
-                listener.Close();
-                PortRegistered = error.ErrorCode == ErrorAlreadyExists;
-                StartFailure = PortRegistered
-                    ? $"MCP port {_options.Port} is already registered."
-                    : $"MCP port {_options.Port} is held by {PortHolder(_options.Port)}.";
-                return false;
-            }
+            if (last_port != _options.Port)
+                StartFailure = $"No MCP port is available between {_options.Port} and {last_port}.";
+            return false;
         }
     }
 

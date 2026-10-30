@@ -24,7 +24,7 @@ The room inspector has a furniture list, search, item actions and JSON export. E
 - `QX.Scripting` optional C# scripting.
 
 ```sh
-dotnet add package QX --version 0.1.1
+dotnet add package QX --version 0.1.2
 ```
 
 The remaining packages are pulled in as dependencies. The examples build directly from this repository.

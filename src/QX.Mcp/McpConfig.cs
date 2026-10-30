@@ -58,27 +58,29 @@ public sealed record McpConfig
         if (stored is not null && IsUsableToken(stored.Token))
             return stored;
 
-        McpConfig created = (stored ?? CreateDefault()) with { Token = CreateToken() };
-        TrySave(created, file);
-        return created;
+        try
+        {
+            using FileStream lease = Lock(file);
+            stored = Read(file) ?? stored;
+            if (stored is not null && IsUsableToken(stored.Token))
+                return stored;
+            McpConfig created = (stored ?? CreateDefault()) with { Token = CreateToken() };
+            created.Write(file);
+            return created;
+        }
+        catch (Exception error) when (
+            error is IOException or UnauthorizedAccessException or NotSupportedException or OperationCanceledException)
+        {
+            return (stored ?? CreateDefault()) with { Token = CreateToken() };
+        }
     }
 
     /// <summary>Writes the configuration atomically, creating the containing directory when needed.</summary>
     public void Save(string? path = null)
     {
         string file = Resolve(path);
-        string? directory = Path.GetDirectoryName(file);
-        if (!string.IsNullOrEmpty(directory))
-            Directory.CreateDirectory(directory);
-
-        string temporary = file + ".tmp";
-        File.WriteAllText(
-            temporary,
-            JsonSerializer.Serialize(
-                new StoredConfig(Token, RequireAuth, AllowExecute, AllowFileWrite, AllowEditor, ToolFilter),
-                FileOptions));
-        RestrictToOwner(temporary);
-        File.Move(temporary, file, overwrite: true);
+        using FileStream lease = Lock(file);
+        Write(file);
     }
 
     /// <summary>Compares a presented token with the configured one in constant time.</summary>
@@ -118,11 +120,10 @@ public sealed record McpConfig
     {
         try
         {
-            if (!File.Exists(path))
-                return null;
-
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(stream);
             StoredConfig? stored = JsonSerializer.Deserialize<StoredConfig>(
-                File.ReadAllText(path),
+                reader.ReadToEnd(),
                 FileOptions);
             if (stored is null)
                 return null;
@@ -144,15 +145,29 @@ public sealed record McpConfig
         }
     }
 
-    private static void TrySave(McpConfig config, string path)
+    private static FileStream Lock(string path)
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+        return FileLock.AcquireAsync(path + ".lock", timeout.Token).GetAwaiter().GetResult();
+    }
+
+    private void Write(string path)
+    {
+        string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
         {
-            config.Save(path);
+            File.WriteAllText(
+                temporary,
+                JsonSerializer.Serialize(
+                    new StoredConfig(Token, RequireAuth, AllowExecute, AllowFileWrite, AllowEditor, ToolFilter),
+                    FileOptions));
+            RestrictToOwner(temporary);
+            File.Move(temporary, path, overwrite: true);
         }
-        catch (Exception error) when (
-            error is IOException or UnauthorizedAccessException or NotSupportedException)
+        finally
         {
+            File.Delete(temporary);
         }
     }
 
