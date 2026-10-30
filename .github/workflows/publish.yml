@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       unlist:
-        description: "Package versions to unlist, separated by spaces: QX.Package@0.1.0"
-        required: true
+        description: "Package versions to unlist, separated by spaces. Leave empty to verify NuGet authentication."
+        required: false
         type: string
 
 permissions:
@@ -54,6 +54,11 @@ jobs:
         if: github.event_name == 'push'
         shell: pwsh
         run: ./tools/pack-framework.ps1
+      - name: Verify maintenance branch
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -ne 'refs/heads/main') { throw 'Package maintenance must run from main.' }
       - name: Authenticate to NuGet
         id: login
         uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841
@@ -71,14 +76,13 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "Publishing $($package.Name) failed." }
           }
       - name: Unlist package versions
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && inputs.unlist != ''
         shell: pwsh
         env:
           NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
           PACKAGE_VERSIONS: ${{ inputs.unlist }}
         run: |
           $ErrorActionPreference = 'Stop'
-          if ($env:GITHUB_REF -ne 'refs/heads/main') { throw 'Package maintenance must run from main.' }
           $versions = @($env:PACKAGE_VERSIONS.Trim() -split '\s+')
           foreach ($entry in $versions) {
             if ($entry -notmatch '^QX(?:\.[A-Za-z0-9]+)*@\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$') {
