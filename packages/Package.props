@@ -3,11 +3,13 @@
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CollectPackageAssemblies</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="@(BundledProject)" PrivateAssets="all" />
     <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="/" />
+    <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="/" />
   </ItemGroup>
   <Target Name="CollectPackageAssemblies" DependsOnTargets="BuildOnlySettings;ResolveReferences">
     <MSBuild Projects="@(BundledProject)" Targets="GetTargetPath" BuildInParallel="true" Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework)">

@@ -6,7 +6,7 @@ and add QX from NuGet:
 ```sh
 dotnet new console -n MyExtension -f net10.0
 cd MyExtension
-dotnet add package QX --version 0.1.2
+dotnet add package QX --version 0.1.3
 ```
 
 Replace `Program.cs` with:
@@ -75,8 +75,8 @@ For actions and their typed inputs, use the [Game API](application.md) and [API 
 Install `QX` first. Add the optional packages only when needed, using the same version:
 
 ```sh
-dotnet add package QX.Mcp --version 0.1.2
-dotnet add package QX.Scripting --version 0.1.2
+dotnet add package QX.Mcp --version 0.1.3
+dotnet add package QX.Scripting --version 0.1.3
 ```
 
 These packages contain the individual framework DLLs. Names such as `Qx.Hosting` and

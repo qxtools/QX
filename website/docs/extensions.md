@@ -117,8 +117,8 @@ The repository examples use project references so they run against the source yo
 For a separate project, install the published packages:
 
 ```sh
-dotnet add package QX --version 0.1.2
-dotnet add package QX.Mcp --version 0.1.2
+dotnet add package QX --version 0.1.3
+dotnet add package QX.Mcp --version 0.1.3
 ```
 
 Replace the QX project references with `QX`, and add `QX.Mcp` for the MCP example.

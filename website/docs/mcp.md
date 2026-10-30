@@ -4,7 +4,7 @@
 or both. It does not depend on QX Scripter or `QX.Scripting`.
 
 ```sh
-dotnet add package QX.Mcp --version 0.1.2
+dotnet add package QX.Mcp --version 0.1.3
 ```
 
 ## Native game tools
