@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <QxFrameworkVersion>0.1.3</QxFrameworkVersion>
+    <QxFrameworkVersion>0.1.4</QxFrameworkVersion>
     <IsPackable>false</IsPackable>
     <PackageId>$(MSBuildProjectName).Internal</PackageId>
     <QxNodaTimeVersion>3.3.5</QxNodaTimeVersion>

@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Net.Sockets;
+using System.Threading.Channels;
 using Qx.Diagnostics;
 using Qx.Protocol;
 using Qx;
@@ -16,6 +17,7 @@ public class GEarthExtension : IInterceptor, IDisposable
 {
     private const string Category = "gearth";
     private const int MaxControlFrameLength = 16 * 1024 * 1024;
+    private const int PendingFrameLimit = 32;
 
     private readonly GEarthOptions _options;
     private readonly InterceptDispatcher _dispatcher = new();
@@ -284,6 +286,14 @@ public class GEarthExtension : IInterceptor, IDisposable
         TaskCompletionSource validated,
         CancellationToken cancellationToken)
     {
+        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        var frames = Channel.CreateBounded<(short Header, ReadOnlyMemory<byte> Body)>(new BoundedChannelOptions(PendingFrameLimit)
+        {
+            SingleReader = true,
+            SingleWriter = true,
+            FullMode = BoundedChannelFullMode.Wait
+        });
+        Task dispatch = ReadFramesAsync(frames.Reader, lifetime.Token);
         byte[] lengthBuffer = new byte[4];
         try
         {
@@ -304,18 +314,10 @@ public class GEarthExtension : IInterceptor, IDisposable
                 if (!IsGEarthControlHeader(header))
                     throw new InvalidDataException("The endpoint did not send a G-Earth control frame.");
                 validated.TrySetResult();
-                try
-                {
-                    await HandleFrameAsync(header, frame.AsMemory(2), cancellationToken).ConfigureAwait(false);
-                }
-                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-                {
-                    throw;
-                }
-                catch (Exception error)
-                {
-                    Diag.Error($"Control frame {header} failed: {error}", Category);
-                }
+                if (header is GControl.Outgoing.OnDoubleClick or GControl.Outgoing.InfoRequest)
+                    await ReadFrameAsync(header, frame.AsMemory(2), cancellationToken).ConfigureAwait(false);
+                else
+                    await frames.Writer.WriteAsync((header, frame.AsMemory(2)), cancellationToken).ConfigureAwait(false);
             }
         }
         catch (IOException error) when (
@@ -329,8 +331,39 @@ public class GEarthExtension : IInterceptor, IDisposable
         }
         finally
         {
+            frames.Writer.TryComplete();
+            await lifetime.CancelAsync().ConfigureAwait(false);
+            try
+            {
+                await dispatch.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (lifetime.IsCancellationRequested)
+            {
+            }
             if (!validated.Task.IsCompleted)
                 validated.TrySetException(new InvalidDataException("The endpoint closed before the G-Earth handshake."));
+        }
+    }
+
+    private async Task ReadFramesAsync(ChannelReader<(short Header, ReadOnlyMemory<byte> Body)> frames, CancellationToken cancellation_token)
+    {
+        await foreach (var frame in frames.ReadAllAsync(cancellation_token).ConfigureAwait(false))
+            await ReadFrameAsync(frame.Header, frame.Body, cancellation_token).ConfigureAwait(false);
+    }
+
+    private async Task ReadFrameAsync(short header, ReadOnlyMemory<byte> body, CancellationToken cancellation_token)
+    {
+        try
+        {
+            await HandleFrameAsync(header, body, cancellation_token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellation_token.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception error)
+        {
+            Diag.Error($"Control frame {header} failed: {error}", Category);
         }
     }
 
