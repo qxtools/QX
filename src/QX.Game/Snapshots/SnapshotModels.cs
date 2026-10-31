@@ -2077,6 +2077,9 @@ public sealed record FloorItemSnapshot(
     string Usage,
     bool IsHidden)
 {
+    public bool IsFromBuildersClub => FurniId.IsFromBuildersClub(Id);
+    public bool IsTemporary => FurniId.IsTemporary(Id);
+
     /// <summary>
     /// Initializes a new instance for compatibility, taking identifiers as plain <see cref="long"/> values and
     /// fixing <see cref="IsRemoved"/> to <see langword="false"/>.
@@ -2260,6 +2263,9 @@ public sealed record WallItemSnapshot(
     string Usage,
     bool IsHidden)
 {
+    public bool IsFromBuildersClub => FurniId.IsFromBuildersClub(Id);
+    public bool IsTemporary => FurniId.IsTemporary(Id);
+
     /// <summary>
     /// Initializes a new instance for compatibility, taking identifiers as plain <see cref="long"/> values and
     /// fixing <see cref="IsRemoved"/> to <see langword="false"/>.

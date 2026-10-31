@@ -13,6 +13,9 @@ public abstract class Furni
     /// <summary>Gets whether the item is a wall item.</summary>
     public bool IsWallItem => Type == ItemType.Wall;
 
+    public bool IsFromBuildersClub => FurniId.IsFromBuildersClub(Id);
+    public bool IsTemporary => FurniId.IsTemporary(Id);
+
     /// <summary>Gets or sets the furni kind identifier.</summary>
     /// <remarks>A negative kind means the packet carries the kind as <see cref="Identifier"/> instead.</remarks>
     public int Kind { get; set; }

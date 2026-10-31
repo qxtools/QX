@@ -33,6 +33,26 @@ await WaitRoomReady();
 Log($"{Users.Count()} users and {FloorItems.Count()} floor items in room {RoomId}");
 ```
 
+## Furniture origin
+
+Floor and wall items expose `IsFromBuildersClub` and `IsTemporary`. Both read the room-item ID
+locally; no variable request or catalog lookup is needed. Room snapshots expose the same properties.
+
+```csharp
+var bc_items = FloorItems.Where(item => item.IsFromBuildersClub);
+var temporary_items = FloorItems.Where(item => item.IsTemporary);
+```
+
+Native extensions can use the properties on `host.Game.Room.FloorItems` and `WallItems`.
+For a standalone room-item ID, use `Qx.Model.FurniId.IsFromBuildersClub(id)` or
+`Qx.Model.FurniId.IsTemporary(id)`.
+
+The client reserves IDs `2147418112..2147483647` for BC and `2147401728..2147418111` for
+temporary furniture. Use the positive IDs from room-item packets, including wall items, rather
+than signed Wired target references, inventory IDs or converted Web API IDs. Nonpositive IDs
+and values above the supported ranges return false. BC availability of a furniture kind does
+not determine the origin of a placed item. Simulation capture resolves origin from these IDs too.
+
 ## Inventory and friends
 
 | Member | Description |
