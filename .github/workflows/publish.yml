@@ -72,7 +72,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           foreach ($package in Get-ChildItem artifacts/framework -Filter '*.nupkg' | Sort-Object Name) {
-            dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+            dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
             if ($LASTEXITCODE -ne 0) { throw "Publishing $($package.Name) failed." }
           }
       - name: Unlist package versions
@@ -94,3 +94,32 @@ jobs:
             dotnet nuget delete $package $version --non-interactive --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
             if ($LASTEXITCODE -ne 0) { throw "Unlisting $entry failed." }
           }
+
+  release:
+    if: github.event_name == 'push'
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --json tagName >/dev/null 2>&1; then
+            exit 0
+          fi
+          previous_tag=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || true)
+          if [[ -n "$previous_tag" ]]; then
+            range="$previous_tag..$GITHUB_SHA"
+          else
+            range="$GITHUB_SHA"
+          fi
+          git log --first-parent --reverse --format=%s "$range" > "$RUNNER_TEMP/release-notes.txt"
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "${GITHUB_REF_NAME#v}" --notes-file "$RUNNER_TEMP/release-notes.txt"
